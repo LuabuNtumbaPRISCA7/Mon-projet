@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gagner en finance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="CSS/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">Gagner en finance</div>
+    <nav class="nav">
+      <a href="#accueil">Accueil</a>
+      <a href="#apropos">À propos</a>
+      <a href="#formations">Formations</a>
+      <a href="#temoignages">Témoignages</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="auth-buttons">
+      <button class="btn-outline">Connexion</button>
+      <button class="btn-primary">S’inscrire</button>
+    </div>
+  </header>
+
+  <section id="accueil" class="hero">
+    <h1>Apprenez à investir intelligemment</h1>
+    <p>Des formations pour maîtriser l’analyse technique et réussir en finance.</p>
+    <input type="text" placeholder="Rechercher une formation..." class="search-bar">
+  </section>
+
+  <section id="apropos" class="section">
+    <h2>À propos</h2>
+    <p>Nous proposons des formations complètes sur l’analyse technique pour aider chacun à devenir autonome dans ses décisions financières.</p>
+  </section>
+
+  <section id="formations" class="section">
+    <h2>Nos Formations</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Intro à l’analyse technique</h3>
+        <p>Comprenez les bases pour bien démarrer en bourse.</p>
+      </div>
+      <div class="card">
+        <h3>Analyse avancée</h3>
+        <p>Apprenez à lire les marchés avec précision et confiance.</p>
+      </div>
+      <div class="card">
+        <h3>Stratégies rentables</h3>
+        <p>Mettez en pratique des méthodes concrètes et efficaces.</p>
+      </div>
+    </div>
+  </section>
+
+ <section id="temoignages" class="section">
+  <h2>Témoignages</h2>
+
+  <form id="temoignageForm">
+    <input type="text" id="nom" placeholder="Votre prénom" required>
+    <textarea id="message" placeholder="Votre témoignage" required></textarea>
+    <button type="submit" class="btn-primary">Envoyer le témoignage</button>
+  </form>
+
+  <div id="listeTemoignages"></div>
+</section>
+
+  <section id="contact" class="section">
+    <h2>Contact</h2>
+    <form id="contactForm">
+      <input type="text" placeholder="Votre nom" required>
+      <input type="email" placeholder="Votre email" required>
+      <textarea placeholder="Votre message" required></textarea>
+      <button type="submit" class="btn-primary">Envoyer</button>
+    </form>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2025 Gagner en finance</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
