@@ -225,3 +225,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cible le H1 dans le top-header
     const mainTitleAnimator = new TextAnimator('.top-header h1', 80); // 80ms de délai entre chaque lettre
 });
+// ==========================================================
+// CLASSE 4 : Gestion du menu responsive mobile
+// ==========================================================
+
+/**
+ * Gère l'ouverture/fermeture du menu responsive via un bouton "burger".
+ */
+class ResponsiveMenuToggle {
+    /**
+     * @param {string} checkboxId ID de l'input checkbox qui contrôle le menu (ex: #menu-toggle).
+     * @param {string} menuSelector Sélecteur du menu (ex: .menu).
+     */
+    constructor(checkboxId, menuSelector) {
+        this.menuCheckbox = document.getElementById(checkboxId);
+        this.menu = document.querySelector(menuSelector);
+
+        if (!this.menuCheckbox || !this.menu) {
+            console.warn("Menu responsive : éléments non trouvés.");
+            return;
+        }
+
+        this.init();
+    }
+
+    init() {
+        // Fermer le menu quand on clique sur un lien du menu
+        this.menu.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                this.menuCheckbox.checked = false;
+            });
+        });
+    }
+}
