@@ -52,24 +52,34 @@ body {
     padding: 0 20px; /* Ajoute un peu d'espace sur les côtés sur les petits écrans */
 }
 
-/* --- Style de la barre "BIENVENUE SUR GAGNER EN FINANCE !" (MODIFIÉ POUR RESPONSIVE ET BOUTON GAUCHE) --- */
+/* --- Style de l'en-tête principal (top-header) pour gérer le logo/titre et le menu hamburger --- */
 .top-header {
     background-color: #333; /* Fond sombre pour la barre du haut */
     color: white; /* Texte blanc */
-    padding: 10px 20px; /* Espacement interne, ajusté pour l'icône */
-    display: flex; /* Pour aligner le titre et l'icône du menu */
-    justify-content: space-between; /* Espacer le titre et l'icône */
-    align-items: center; /* Les aligner verticalement au centre */
-    overflow: hidden; /* Important pour cacher les lettres avant qu'elles ne bougent */
+    padding: 10px 20px; /* Espacement interne */
+    display: flex; /* Utilise flexbox pour l'alignement */
+    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne sur de petits écrans */
+    align-items: center; /* Alignement vertical au centre */
+    position: relative; /* Pour positionner absolument le menu si besoin */
+    z-index: 20; /* Pour s'assurer que le header est au-dessus du contenu */
 }
 
+.top-header .container.header-container { /* Cible le container spécifique dans le header */
+    display: flex;
+    justify-content: space-between; /* Espacer le bouton hamburger, le logo et le menu */
+    align-items: center;
+    width: 100%; /* Prend toute la largeur du top-header */
+    padding: 0; /* Pas de padding ici, géré par le top-header */
+}
+
+/* Styles pour le titre principal (BIENVENUE SUR GAGNER EN FINANCE !) */
 .top-header h1 {
     margin: 0; /* Supprime les marges par défaut du h1 */
     font-size: 2.5em; /* Taille de police par défaut */
-    display: inline-block; /* Permet aux spans à l'intérieur de rester sur la même ligne */
-    white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes si les spans deviennent des blocs */
-    flex-grow: 1; /* Permet au titre de prendre l'espace disponible au centre */
-    text-align: center; /* Centre le titre au sein de son espace */
+    white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
+    text-align: center; /* Centre le titre */
+    flex-grow: 1; /* Permet au titre de prendre l'espace disponible */
+    order: 2; /* Ordre par défaut sur desktop */
 }
 
 /* --- Styles pour l'animation du texte "BIENVENUE SUR GAGNER EN FINANCE !" --- */
@@ -108,36 +118,6 @@ body {
     object-fit: cover;
     object-position: center;
     z-index: -1;
-}
-
-/* --- Style de la navigation (onglets) --- */
-.main-nav { /* Note: votre HTML utilise '.navbar' et non '.main-nav' pour la navigation principale. */
-    width: 100%;
-    padding: 20px 0;
-    position: relative;
-    z-index: 1;
-}
-
-.main-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-}
-
-.main-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.2em;
-    font-weight: bold;
-    padding: 5px 10px;
-    transition: color 0.3s ease;
-}
-
-.main-nav ul li a:hover {
-    color: #ffd700;
 }
 
 /* --- Style du contenu texte "Votre destination incontournable..." --- */
@@ -301,14 +281,16 @@ body {
 }
 
 /* --- Style du lien de navigation actif --- */
-.main-nav ul li a.active { /* Utilise .main-nav, mais votre HTML a .navbar .menu */
+/* CORRECTION: Cible .navbar .menu li a.active car le HTML utilise .navbar et non .main-nav */
+.navbar .menu li a.active {
     color: #ffd700;
     border-bottom: 2px solid #ffd700;
     padding-bottom: 3px;
 }
 
 /* --- Style du pied de page --- */
-.site-footer {
+/* CORRECTION: Utilisation du sélecteur 'footer' direct car ton HTML utilise <footer class="site-footer"> n'est pas utilisé */
+footer {
     background-color: #333;
     color: white;
     padding: 20px 0;
@@ -316,11 +298,11 @@ body {
     font-size: 0.9em;
 }
 
-.site-footer .container {
+footer .container {
     /* Le container assurera que le contenu ne s'étale pas sur toute la largeur si vous en avez un */
 }
 
-.site-footer p {
+footer p {
     margin: 0;
 }
 .how-it-works {
@@ -369,125 +351,179 @@ body {
     border-radius: 8px;
     margin-bottom: 15px;
   }
-  /* === MENU RESPONSIVE POUR MOBILE (MODIFIÉ POUR BOUTON À GAUCHE) === */
 
-/* Garde les styles de la navbar principale qui se trouvent en dessous du top-header */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #333;
-    color: white;
-    padding: 15px 20px;
-    position: relative;
-    z-index: 10;
+/* === STYLES SPÉCIFIQUES POUR LE MENU HAMBURGER RESPONSIVE (AJOUTÉS/MODIFIÉS) === */
+
+/* Cache la checkbox elle-même */
+.menu-toggle-checkbox {
+    display: none;
 }
 
-.navbar .logo {
+/* Styles pour le bouton hamburger (le label) */
+.menu-toggle-button {
+    display: flex; /* Utilise flexbox pour centrer les barres */
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px; /* Largeur de ton bouton */
+    height: 25px; /* Hauteur de ton bouton */
+    cursor: pointer;
+    z-index: 1000; /* Assure qu'il est au-dessus du menu */
+    position: relative; /* Pour positionner l'icône par rapport à lui-même si besoin */
+    order: 1; /* Le place en premier dans le flexbox par défaut (gauche) */
+}
+
+/* Styles pour chaque barre du hamburger */
+.menu-toggle-button .bar {
+    width: 100%;
+    height: 3px; /* Épaisseur des barres */
+    background-color: white; /* Couleur des barres, blanc pour le fond sombre */
+    border-radius: 5px;
+    transition: all 0.3s ease; /* Animation pour la transformation des barres */
+}
+
+/* Styles pour le logo dans la navbar (desktop) et aussi dans le header-container (mobile) */
+.logo {
     font-weight: bold;
     font-size: 20px;
+    order: 2; /* Par défaut après le bouton sur mobile */
+    margin: 0 auto; /* Pour centrer le logo sur mobile entre le bouton et le h1 */
 }
 
-.menu {
-    list-style: none;
+/* Styles de la navigation principale (navbar) */
+.navbar {
+    /* Sur desktop, la navbar est affichée en ligne */
     display: flex;
+    justify-content: flex-end; /* Alignement des liens à droite */
+    align-items: center;
+    background: transparent; /* Pas de fond sur desktop, c'est le top-header qui gère le fond */
+    color: white;
+    padding: 0; /* Le padding est géré par les éléments internes ou le top-header */
+    position: static; /* Positionnement normal sur desktop */
+    z-index: 10;
+    order: 3; /* Sur desktop, la nav vient après le logo/h1 */
+    flex-grow: 1; /* Pour prendre l'espace restant */
+}
+
+.navbar .menu {
+    list-style: none;
+    display: flex; /* Affichage en ligne pour desktop */
     gap: 25px;
     margin: 0;
     padding: 0;
 }
 
-.menu li a {
+.navbar .menu li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
     font-size: 1.1em;
+    padding: 5px 0; /* Ajuste le padding vertical pour le soulignement actif */
     transition: color 0.3s ease;
 }
 
-.menu li a:hover {
+.navbar .menu li a:hover {
     color: #ffd700;
 }
 
-/* Le menu-icon est maintenant géré dans le top-header pour mobile */
-.menu-icon {
-    display: none; /* Masqué par défaut sur desktop */
-    font-size: 30px;
-    cursor: pointer;
-    color: white; /* Assurez-vous qu'il est blanc */
-}
 
-#menu-toggle {
-    display: none; /* Cache la checkbox */
-}
+/* === MEDIA QUERIES POUR LE RESPONSIVE === */
 
-/* Responsive pour petit écran */
 @media (max-width: 768px) {
-    /* Adaptation de la taille du titre */
+    /* Ajustement de la structure du header sur mobile */
+    .top-header .container.header-container {
+        flex-wrap: wrap; /* Permet aux éléments de passer à la ligne */
+        justify-content: flex-start; /* Aligne les éléments au début */
+    }
+
     .top-header h1 {
         font-size: 1.8em; /* Taille réduite pour les tablettes */
+        order: 3; /* Le titre h1 vient après le bouton et le logo */
+        width: 100%; /* Prend toute la largeur pour être sous la nav principale */
+        text-align: center; /* Centre le titre */
+        margin-top: 15px; /* Espace au-dessus du titre */
     }
 
-    /* Styles pour le top-header pour aligner l'icône à gauche */
-    .top-header .container { /* Assurez-vous que le container ne bloque pas flex sur mobile */
-        width: auto;
-        padding: 0;
-        flex-grow: 1; /* Permet au conteneur de prendre de l'espace */
-        text-align: center; /* Centre le texte du titre */
+    .logo {
+        order: 2; /* Le logo vient après le bouton hamburger */
+        margin-left: 20px; /* Espace entre le bouton et le logo */
     }
 
-    /* Montre l'icône du menu et la place à gauche */
-    .menu-icon {
-        display: block; /* Affiche l'icône */
-        order: -1; /* Le place en premier (à gauche) dans le flexbox */
-        margin-right: 20px; /* Ajoute un espace à droite de l'icône */
+    /* Montre l'icône du menu hamburger et le place à gauche */
+    .menu-toggle-button {
+        display: flex; /* Assure qu'il est visible sur mobile */
+        order: 1; /* Le place en premier (à gauche) */
     }
 
-    /* Cache la navigation principale de la navbar sur mobile */
-    .navbar .logo {
-        width: 100%; /* Le logo prend toute la largeur */
-        text-align: center;
-        margin-bottom: 10px;
-    }
-
-    .menu {
-        flex-direction: column;
-        /* La position absolute est retirée car le menu sera sous le top-header */
-        width: 100%;
-        display: none; /* Masqué par défaut */
-        padding: 15px 0;
-        text-align: center;
-        /* Le fond du menu doit être le même que le top-header pour la continuité */
-        background-color: #333;
-        /* Assurez-vous que le menu est bien positionné sous le header */
-        position: absolute; /* Gardez position absolute pour qu'il soit bien sous le header */
+    /* La navigation principale (navbar) se comporte différemment sur mobile */
+    .navbar {
+        position: absolute; /* Positionne le menu en superposition */
         top: 100%; /* Se positionne juste en dessous du top-header */
         left: 0;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Ombre pour le menu déroulant */
-        z-index: 9; /* En dessous de l'écran de chargement, mais au-dessus du contenu */
+        width: 100%;
+        background-color: #333; /* Fond du menu déroulant */
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        flex-direction: column; /* Les liens s'empilent verticalement */
+        display: none; /* Cache le menu par défaut */
+        z-index: 99; /* Moins que le bouton pour qu'il soit cliquable */
+        /* Animation pour le glissement (si tu as mis une transformation) */
+        transform: translateX(-100%); /* Commence hors de l'écran */
+        transition: transform 0.3s ease-out;
     }
 
-    #menu-toggle:checked ~ .menu-icon + .menu {
-        display: flex; /* Affiche le menu quand la checkbox est cochée */
+    .navbar .menu {
+        flex-direction: column; /* Les éléments de liste s'empilent */
+        width: 100%;
+        padding: 15px 0;
+        text-align: center;
     }
 
-    /* Styles pour les éléments du menu quand il est ouvert */
-    .menu li {
-        margin: 0; /* Réinitialise les marges des éléments de liste */
+    .navbar .menu li {
+        margin: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1); /* Ligne de séparation */
     }
 
-    .menu li:first-child {
-        border-top: none; /* Pas de ligne sur le premier élément */
+    .navbar .menu li:first-child {
+        border-top: none;
     }
 
-    .menu li a {
+    .navbar .menu li a {
         padding: 15px; /* Plus grand padding pour les liens cliquables */
         display: block; /* Les liens prennent toute la largeur de l'élément */
+    }
+
+    /* === MAGIE DU RESPONSIVE CSS (VIA CHECKBOX) === */
+    /* Lorsque la checkbox est cochée, affiche le menu */
+    #menu-toggle:checked ~ .menu-toggle-button + .logo + .navbar { /* Si le menu est après le label et le logo */
+        display: flex; /* Rend le menu visible */
+        transform: translateX(0); /* Le fait glisser en position */
+    }
+    /* Note: Le sélecteur ci-dessus `#menu-toggle:checked ~ .menu-toggle-button + .logo + .navbar` est très spécifique
+       et dépend de l'ordre exact de tes éléments frères dans le HTML.
+       Une approche plus simple pourrait être de manipuler directement la classe 'active' sur la '.navbar' avec JS,
+       et de retirer ce sélecteur CSS. On verra avec le JS.
+    */
+
+
+    /* Animations des barres du hamburger quand il est ouvert (optionnel mais joli) */
+    #menu-toggle:checked + .menu-toggle-button .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    #menu-toggle:checked + .menu-toggle-button .bar:nth-child(2) {
+        opacity: 0; /* La barre du milieu disparaît */
+    }
+    #menu-toggle:checked + .menu-toggle-button .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
     }
 }
 
 @media (max-width: 480px) {
     .top-header h1 {
         font-size: 1.4em; /* Taille encore plus réduite pour les téléphones */
+    }
+    .hero-content p {
+        font-size: 1.1em;
+    }
+    .steps .step {
+        flex: 1 1 90%; /* Chaque étape prend presque toute la largeur sur très petits écrans */
     }
 }
