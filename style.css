@@ -52,20 +52,24 @@ body {
     padding: 0 20px; /* Ajoute un peu d'espace sur les côtés sur les petits écrans */
 }
 
-/* --- Style de la barre "BIENVENUE SUR GAGNER EN FINANCE !" --- */
+/* --- Style de la barre "BIENVENUE SUR GAGNER EN FINANCE !" (MODIFIÉ POUR RESPONSIVE ET BOUTON GAUCHE) --- */
 .top-header {
     background-color: #333; /* Fond sombre pour la barre du haut */
     color: white; /* Texte blanc */
-    padding: 20px 0; /* Espacement interne */
-    text-align: center; /* Centre le texte */
+    padding: 10px 20px; /* Espacement interne, ajusté pour l'icône */
+    display: flex; /* Pour aligner le titre et l'icône du menu */
+    justify-content: space-between; /* Espacer le titre et l'icône */
+    align-items: center; /* Les aligner verticalement au centre */
     overflow: hidden; /* Important pour cacher les lettres avant qu'elles ne bougent */
 }
 
 .top-header h1 {
     margin: 0; /* Supprime les marges par défaut du h1 */
-    font-size: 2.5em; /* Taille de police plus grande */
+    font-size: 2.5em; /* Taille de police par défaut */
     display: inline-block; /* Permet aux spans à l'intérieur de rester sur la même ligne */
     white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes si les spans deviennent des blocs */
+    flex-grow: 1; /* Permet au titre de prendre l'espace disponible au centre */
+    text-align: center; /* Centre le titre au sein de son espace */
 }
 
 /* --- Styles pour l'animation du texte "BIENVENUE SUR GAGNER EN FINANCE !" --- */
@@ -74,7 +78,6 @@ body {
     opacity: 0; /* Masqué au début */
     transform: translateY(20px); /* Commence 20px en dessous */
     transition: transform 0.6s ease-out, opacity 0.6s ease-out; /* Transition douce */
-    /* Ces propriétés initiales sont écrasées par l'animation @keyframes une fois 'animate' ajoutée */
 }
 
 /* Clé de l'animation: l'état final de chaque lettre */
@@ -325,20 +328,20 @@ body {
     padding: 60px 20px;
     text-align: center;
   }
-  
+
   .how-it-works h2 {
     font-size: 2.5em;
     margin-bottom: 40px;
     color: #222;
   }
-  
+
   .steps {
     display: flex;
     justify-content: center;
     gap: 30px;
     flex-wrap: wrap;
   }
-  
+
   .step {
     background: white;
     border-radius: 12px;
@@ -356,9 +359,9 @@ body {
   .step p {
     color: black;
     line-height: 1.6;
- 
+
   }
-  
+
   .step img {
     width: 100%;
     height: 180px;
@@ -366,8 +369,9 @@ body {
     border-radius: 8px;
     margin-bottom: 15px;
   }
-  /* === MENU RESPONSIVE POUR MOBILE === */
+  /* === MENU RESPONSIVE POUR MOBILE (MODIFIÉ POUR BOUTON À GAUCHE) === */
 
+/* Garde les styles de la navbar principale qui se trouvent en dessous du top-header */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -404,35 +408,86 @@ body {
     color: #ffd700;
 }
 
+/* Le menu-icon est maintenant géré dans le top-header pour mobile */
 .menu-icon {
-    display: none;
+    display: none; /* Masqué par défaut sur desktop */
     font-size: 30px;
     cursor: pointer;
+    color: white; /* Assurez-vous qu'il est blanc */
 }
 
 #menu-toggle {
-    display: none;
+    display: none; /* Cache la checkbox */
 }
 
 /* Responsive pour petit écran */
 @media (max-width: 768px) {
+    /* Adaptation de la taille du titre */
+    .top-header h1 {
+        font-size: 1.8em; /* Taille réduite pour les tablettes */
+    }
+
+    /* Styles pour le top-header pour aligner l'icône à gauche */
+    .top-header .container { /* Assurez-vous que le container ne bloque pas flex sur mobile */
+        width: auto;
+        padding: 0;
+        flex-grow: 1; /* Permet au conteneur de prendre de l'espace */
+        text-align: center; /* Centre le texte du titre */
+    }
+
+    /* Montre l'icône du menu et la place à gauche */
+    .menu-icon {
+        display: block; /* Affiche l'icône */
+        order: -1; /* Le place en premier (à gauche) dans le flexbox */
+        margin-right: 20px; /* Ajoute un espace à droite de l'icône */
+    }
+
+    /* Cache la navigation principale de la navbar sur mobile */
+    .navbar .logo {
+        width: 100%; /* Le logo prend toute la largeur */
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
     .menu {
         flex-direction: column;
-        position: absolute;
-        top: 60px;
-        right: 0;
-        background-color: #333;
+        /* La position absolute est retirée car le menu sera sous le top-header */
         width: 100%;
-        display: none;
+        display: none; /* Masqué par défaut */
         padding: 15px 0;
         text-align: center;
+        /* Le fond du menu doit être le même que le top-header pour la continuité */
+        background-color: #333;
+        /* Assurez-vous que le menu est bien positionné sous le header */
+        position: absolute; /* Gardez position absolute pour qu'il soit bien sous le header */
+        top: 100%; /* Se positionne juste en dessous du top-header */
+        left: 0;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Ombre pour le menu déroulant */
+        z-index: 9; /* En dessous de l'écran de chargement, mais au-dessus du contenu */
     }
 
-    #menu-toggle:checked + .menu-icon + .menu { /* Adjusted selector based on HTML structure */
-        display: flex;
+    #menu-toggle:checked ~ .menu-icon + .menu {
+        display: flex; /* Affiche le menu quand la checkbox est cochée */
     }
 
-    .menu-icon {
-        display: block;
+    /* Styles pour les éléments du menu quand il est ouvert */
+    .menu li {
+        margin: 0; /* Réinitialise les marges des éléments de liste */
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Ligne de séparation */
+    }
+
+    .menu li:first-child {
+        border-top: none; /* Pas de ligne sur le premier élément */
+    }
+
+    .menu li a {
+        padding: 15px; /* Plus grand padding pour les liens cliquables */
+        display: block; /* Les liens prennent toute la largeur de l'élément */
+    }
+}
+
+@media (max-width: 480px) {
+    .top-header h1 {
+        font-size: 1.4em; /* Taille encore plus réduite pour les téléphones */
     }
 }
