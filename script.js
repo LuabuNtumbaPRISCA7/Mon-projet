@@ -6,11 +6,12 @@
  */
 
 // ==========================================================
-// CLASSE 0 : Gestionnaire de l'écran de chargement (NOUVELLE CLASSE)
+// CLASSE 0 : Gestionnaire de l'écran de chargement (MIS À JOUR)
 // ==========================================================
 
 /**
- * Gère l'affichage et la disparition d'un écran de chargement au début du site.
+ * Gère l'affichage et la disparition d'un écran de chargement au début du site,
+ * en s'assurant qu'il n'apparaît qu'une seule fois par session de navigation.
  */
 class LoadingScreenManager {
     /**
@@ -25,6 +26,7 @@ class LoadingScreenManager {
         this.mainContent = document.getElementById(mainContentSelector.replace('#', ''));
         this.initialDelay = initialDelay;
         this.fadeOutDuration = fadeOutDuration;
+        this.sessionStorageKey = 'loadingScreenShown'; // Clé pour le session storage
 
         if (!this.loadingScreen || !this.mainContent) {
             console.error("Erreur: Éléments de l'écran de chargement ou du contenu principal introuvables.");
@@ -36,29 +38,32 @@ class LoadingScreenManager {
 
     /**
      * Initialise l'écran de chargement.
-     * Attend le chargement complet de la page (y compris les ressources) avant de le masquer.
+     * Vérifie si l'écran a déjà été montré durant cette session.
      */
     init() {
-        // Cache le contenu principal immédiatement au chargement du script
-        // Note: Le display: none; est déjà dans le CSS, mais c'est une sécurité.
-        this.mainContent.style.display = 'none';
+        // Vérifie si l'écran de chargement a déjà été affiché durant cette session
+        if (sessionStorage.getItem(this.sessionStorageKey)) {
+            // Si déjà affiché, masquer l'écran de chargement immédiatement
+            this.loadingScreen.style.display = 'none';
+            this.mainContent.style.display = 'block'; // Afficher le contenu principal
+            console.log("Écran de chargement déjà affiché pour cette session, masqué instantanément.");
+        } else {
+            // Si non affiché, procéder à l'animation et marquer comme affiché
+            this.mainContent.style.display = 'none'; // Assurez-vous que le contenu est caché initialement
 
-        // window.onload s'assure que TOUTES les ressources (images, CSS, etc.) sont chargées.
-        // C'est essentiel pour ne pas afficher le site avant qu'il ne soit prêt.
-        window.onload = () => {
-            // Un léger délai pour permettre à l'utilisateur de voir l'écran de chargement
-            setTimeout(() => {
-                // Déclenche l'animation de fondu via CSS (opacité de 1 à 0)
-                this.loadingScreen.style.opacity = "0";
-
-                // Après la durée de l'animation de fondu, masquer complètement l'écran et afficher le contenu principal
+            window.onload = () => {
                 setTimeout(() => {
-                    this.loadingScreen.style.display = "none";
-                    this.mainContent.style.display = "block"; // Utilise "block" car c'est une div
-                }, this.fadeOutDuration);
-
-            }, this.initialDelay);
-        };
+                    this.loadingScreen.style.opacity = "0";
+                    setTimeout(() => {
+                        this.loadingScreen.style.display = "none";
+                        this.mainContent.style.display = "block";
+                        // Marquer l'écran comme ayant été affiché pour cette session
+                        sessionStorage.setItem(this.sessionStorageKey, 'true');
+                        console.log("Écran de chargement affiché pour la première fois cette session.");
+                    }, this.fadeOutDuration);
+                }, this.initialDelay);
+            };
+        }
     }
 }
 
