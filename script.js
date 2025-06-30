@@ -2,8 +2,66 @@
  * @file script.js
  * @description Contient les classes JavaScript pour ajouter de l'interactivité au site "Gagner en Finance".
  * Inclut un bouton "Retour en haut", une gestion des liens de navigation actifs,
- * et une animation de texte au chargement de la page.
+ * une animation de texte au chargement de la page, et un écran de chargement initial.
  */
+
+// ==========================================================
+// CLASSE 0 : Gestionnaire de l'écran de chargement (NOUVELLE CLASSE)
+// ==========================================================
+
+/**
+ * Gère l'affichage et la disparition d'un écran de chargement au début du site.
+ */
+class LoadingScreenManager {
+    /**
+     * Crée une instance de LoadingScreenManager.
+     * @param {string} loadingScreenSelector Le sélecteur CSS de l'écran de chargement (ex: '#loading-screen').
+     * @param {string} mainContentSelector Le sélecteur CSS du conteneur du contenu principal (ex: '#main-content').
+     * @param {number} initialDelay Le délai en ms avant que l'écran de chargement ne commence à disparaître.
+     * @param {number} fadeOutDuration Le temps en ms que prendra l'animation de fondu de l'écran de chargement (doit correspondre au CSS).
+     */
+    constructor(loadingScreenSelector, mainContentSelector, initialDelay = 500, fadeOutDuration = 1000) {
+        this.loadingScreen = document.getElementById(loadingScreenSelector.replace('#', ''));
+        this.mainContent = document.getElementById(mainContentSelector.replace('#', ''));
+        this.initialDelay = initialDelay;
+        this.fadeOutDuration = fadeOutDuration;
+
+        if (!this.loadingScreen || !this.mainContent) {
+            console.error("Erreur: Éléments de l'écran de chargement ou du contenu principal introuvables.");
+            return;
+        }
+
+        this.init();
+    }
+
+    /**
+     * Initialise l'écran de chargement.
+     * Attend le chargement complet de la page (y compris les ressources) avant de le masquer.
+     */
+    init() {
+        // Cache le contenu principal immédiatement au chargement du script
+        // Note: Le display: none; est déjà dans le CSS, mais c'est une sécurité.
+        this.mainContent.style.display = 'none';
+
+        // window.onload s'assure que TOUTES les ressources (images, CSS, etc.) sont chargées.
+        // C'est essentiel pour ne pas afficher le site avant qu'il ne soit prêt.
+        window.onload = () => {
+            // Un léger délai pour permettre à l'utilisateur de voir l'écran de chargement
+            setTimeout(() => {
+                // Déclenche l'animation de fondu via CSS (opacité de 1 à 0)
+                this.loadingScreen.style.opacity = "0";
+
+                // Après la durée de l'animation de fondu, masquer complètement l'écran et afficher le contenu principal
+                setTimeout(() => {
+                    this.loadingScreen.style.display = "none";
+                    this.mainContent.style.display = "block"; // Utilise "block" car c'est une div
+                }, this.fadeOutDuration);
+
+            }, this.initialDelay);
+        };
+    }
+}
+
 
 // ==========================================================
 // CLASSE 1 : Gestionnaire du bouton "Retour en haut"
@@ -206,26 +264,6 @@ class TextAnimator {
 
 
 // ==========================================================
-// INITIALISATION DE NOS CLASSES QUAND LE DOM EST PRÊT
-// ==========================================================
-
-// Attendre que le DOM (Document Object Model) soit entièrement chargé
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialisation du gestionnaire de liens de navigation actifs
-    const navManager = new ActiveNavLinkManager('.main-nav ul');
-
-    // Ajout dynamique du bouton "Retour en haut"
-    const scrollToTopBtn = document.createElement('button');
-    scrollToTopBtn.id = 'scrollToTopBtn';
-    scrollToTopBtn.textContent = '↑';
-    document.body.appendChild(scrollToTopBtn);
-    const scrollButton = new ScrollToTopButton('#scrollToTopBtn', 400);
-
-    // Initialisation de l'animateur de texte pour le titre principal
-    // Cible le H1 dans le top-header
-    const mainTitleAnimator = new TextAnimator('.top-header h1', 80); // 80ms de délai entre chaque lettre
-});
-// ==========================================================
 // CLASSE 4 : Gestion du menu responsive mobile
 // ==========================================================
 
@@ -256,5 +294,44 @@ class ResponsiveMenuToggle {
                 this.menuCheckbox.checked = false;
             });
         });
+
+        // Gestion du toggle avec la checkbox
+        this.menuCheckbox.addEventListener('change', () => {
+            if (this.menuCheckbox.checked) {
+                this.menu.classList.add('active');
+            } else {
+                this.menu.classList.remove('active');
+            }
+        });
     }
 }
+
+
+// ==========================================================
+// INITIALISATION DE NOS CLASSES QUAND LE DOM EST PRÊT
+// ==========================================================
+
+// Attendre que le DOM (Document Object Model) soit entièrement chargé
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialisation du gestionnaire de l'écran de chargement EN PREMIER
+    // Il gérera l'affichage du contenu principal après le chargement complet.
+    const loadingManager = new LoadingScreenManager('loading-screen', 'main-content', 500, 1000); // 0.5s délai, 1s fondu
+
+    // Initialisation du gestionnaire de liens de navigation actifs
+    // (Le selecteur .main-nav ul n'existe pas dans le HTML fourni, j'ai utilisé .navbar .menu)
+    const navManager = new ActiveNavLinkManager('.navbar .menu');
+
+    // Ajout dynamique du bouton "Retour en haut"
+    const scrollToTopBtn = document.createElement('button');
+    scrollToTopBtn.id = 'scrollToTopBtn';
+    scrollToTopBtn.textContent = '↑';
+    document.body.appendChild(scrollToTopBtn);
+    const scrollButton = new ScrollToTopButton('#scrollToTopBtn', 400);
+
+    // Initialisation de l'animateur de texte pour le titre principal
+    // Cible le H1 dans le top-header
+    const mainTitleAnimator = new TextAnimator('.top-header h1', 80); // 80ms de délai entre chaque lettre
+
+    // Initialisation du gestionnaire de menu responsive
+    const responsiveMenu = new ResponsiveMenuToggle('menu-toggle', '.menu');
+});
