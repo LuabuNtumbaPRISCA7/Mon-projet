@@ -2,71 +2,8 @@
  * @file script.js
  * @description Contient les classes JavaScript pour ajouter de l'interactivité au site "Gagner en Finance".
  * Inclut un bouton "Retour en haut", une gestion des liens de navigation actifs,
- * une animation de texte au chargement de la page, et un écran de chargement initial.
+ * et une animation de texte au chargement de la page.
  */
-
-// ==========================================================
-// CLASSE 0 : Gestionnaire de l'écran de chargement (MIS À JOUR)
-// ==========================================================
-
-/**
- * Gère l'affichage et la disparition d'un écran de chargement au début du site,
- * en s'assurant qu'il n'apparaît qu'une seule fois par session de navigation.
- */
-class LoadingScreenManager {
-    /**
-     * Crée une instance de LoadingScreenManager.
-     * @param {string} loadingScreenSelector Le sélecteur CSS de l'écran de chargement (ex: '#loading-screen').
-     * @param {string} mainContentSelector Le sélecteur CSS du conteneur du contenu principal (ex: '#main-content').
-     * @param {number} initialDelay Le délai en ms avant que l'écran de chargement ne commence à disparaître.
-     * @param {number} fadeOutDuration Le temps en ms que prendra l'animation de fondu de l'écran de chargement (doit correspondre au CSS).
-     */
-    constructor(loadingScreenSelector, mainContentSelector, initialDelay = 500, fadeOutDuration = 1000) {
-        this.loadingScreen = document.getElementById(loadingScreenSelector.replace('#', ''));
-        this.mainContent = document.getElementById(mainContentSelector.replace('#', ''));
-        this.initialDelay = initialDelay;
-        this.fadeOutDuration = fadeOutDuration;
-        this.sessionStorageKey = 'loadingScreenShown'; // Clé pour le session storage
-
-        if (!this.loadingScreen || !this.mainContent) {
-            console.error("Erreur: Éléments de l'écran de chargement ou du contenu principal introuvables.");
-            return;
-        }
-
-        this.init();
-    }
-
-    /**
-     * Initialise l'écran de chargement.
-     * Vérifie si l'écran a déjà été montré durant cette session.
-     */
-    init() {
-        // Vérifie si l'écran de chargement a déjà été affiché durant cette session
-        if (sessionStorage.getItem(this.sessionStorageKey)) {
-            // Si déjà affiché, masquer l'écran de chargement immédiatement
-            this.loadingScreen.style.display = 'none';
-            this.mainContent.style.display = 'block'; // Afficher le contenu principal
-            console.log("Écran de chargement déjà affiché pour cette session, masqué instantanément.");
-        } else {
-            // Si non affiché, procéder à l'animation et marquer comme affiché
-            this.mainContent.style.display = 'none'; // Assurez-vous que le contenu est caché initialement
-
-            window.onload = () => {
-                setTimeout(() => {
-                    this.loadingScreen.style.opacity = "0";
-                    setTimeout(() => {
-                        this.loadingScreen.style.display = "none";
-                        this.mainContent.style.display = "block";
-                        // Marquer l'écran comme ayant été affiché pour cette session
-                        sessionStorage.setItem(this.sessionStorageKey, 'true');
-                        console.log("Écran de chargement affiché pour la première fois cette session.");
-                    }, this.fadeOutDuration);
-                }, this.initialDelay);
-            };
-        }
-    }
-}
-
 
 // ==========================================================
 // CLASSE 1 : Gestionnaire du bouton "Retour en haut"
@@ -154,7 +91,7 @@ class ScrollToTopButton {
 class ActiveNavLinkManager {
     /**
      * Crée une instance de ActiveNavLinkManager.
-     * @param {string} navSelector Le sélecteur CSS du conteneur de navigation (ex: '.navbar .menu').
+     * @param {string} navSelector Le sélecteur CSS du conteneur de navigation (ex: '.main-nav ul').
      * @param {string} activeClass La classe CSS à ajouter au lien actif (par défaut 'active').
      */
     constructor(navSelector, activeClass = 'active') {
@@ -269,81 +206,13 @@ class TextAnimator {
 
 
 // ==========================================================
-// CLASSE 4 : Gestion du menu responsive mobile (VERSION MISE À JOUR)
-// ==========================================================
-
-/**
- * Gère l'ouverture/fermeture du menu responsive via un bouton "burger"
- * et une checkbox cachée.
- */
-class ResponsiveMenuToggle {
-    /**
-     * @param {string} checkboxId ID de l'input checkbox qui contrôle le menu (ex: 'menu-toggle').
-     * @param {string} menuSelector Sélecteur du conteneur du menu (ex: '.navbar .menu').
-     */
-    constructor(checkboxId, menuSelector) {
-        this.menuCheckbox = document.getElementById(checkboxId);
-        this.menu = document.querySelector(menuSelector);
-        // Ajout du sélecteur pour le bouton visible (le label)
-        this.toggleButton = document.querySelector(`label[for="${checkboxId}"]`);
-
-
-        if (!this.menuCheckbox || !this.menu || !this.toggleButton) {
-            console.warn(`ResponsiveMenuToggle : Éléments requis non trouvés. (Checkbox: #${checkboxId}, Menu: ${menuSelector}, Bouton: label[for="${checkboxId}"])`);
-            return;
-        }
-
-        this.init();
-    }
-
-    init() {
-        // La gestion de l'ajout/retrait de la classe 'active' basée sur le 'change'
-        // de la checkbox est maintenue si tu as des animations JS complexes liées à cette classe.
-        // Sinon, le CSS seul peut gérer l'affichage via :checked.
-        this.menuCheckbox.addEventListener('change', () => {
-            if (this.menuCheckbox.checked) {
-                this.menu.classList.add('active'); // Ajoute la classe 'active' si le menu est ouvert
-            } else {
-                this.menu.classList.remove('active'); // Retire la classe 'active' si le menu est fermé
-            }
-        });
-
-        // Fermer le menu quand on clique sur un lien à l'intérieur du menu
-        this.menu.querySelectorAll("a").forEach(link => {
-            link.addEventListener("click", () => {
-                this.menuCheckbox.checked = false; // Décoche la checkbox pour fermer le menu
-                this.menu.classList.remove('active'); // S'assure que la classe 'active' est retirée
-            });
-        });
-
-        // Fermer le menu si l'utilisateur clique en dehors du menu ou du bouton (Amélioration UX)
-        document.addEventListener('click', (event) => {
-            const isClickInsideMenu = this.menu.contains(event.target);
-            const isClickOnToggleButton = this.toggleButton.contains(event.target);
-
-            // Si le menu est ouvert ET que le clic n'est ni dans le menu, ni sur le bouton toggle
-            if (this.menuCheckbox.checked && !isClickInsideMenu && !isClickOnToggleButton) {
-                this.menuCheckbox.checked = false;
-                this.menu.classList.remove('active'); // S'assure que la classe 'active' est retirée
-            }
-        });
-    }
-}
-
-
-// ==========================================================
-// INITIALISATION DE NOS CLASSES QUAND LE DOM EST PRÊM
+// INITIALISATION DE NOS CLASSES QUAND LE DOM EST PRÊT
 // ==========================================================
 
 // Attendre que le DOM (Document Object Model) soit entièrement chargé
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialisation du gestionnaire de l'écran de chargement EN PREMIER
-    // Il gérera l'affichage du contenu principal après le chargement complet.
-    const loadingManager = new LoadingScreenManager('loading-screen', 'main-content', 500, 1000); // 0.5s délai, 1s fondu
-
     // Initialisation du gestionnaire de liens de navigation actifs
-    // Le selecteur .navbar .menu est correct pour le HTML fourni
-    const navManager = new ActiveNavLinkManager('.navbar .menu');
+    const navManager = new ActiveNavLinkManager('.main-nav ul');
 
     // Ajout dynamique du bouton "Retour en haut"
     const scrollToTopBtn = document.createElement('button');
@@ -355,10 +224,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialisation de l'animateur de texte pour le titre principal
     // Cible le H1 dans le top-header
     const mainTitleAnimator = new TextAnimator('.top-header h1', 80); // 80ms de délai entre chaque lettre
-
-    // Initialisation du gestionnaire de menu responsive
-    // Les sélecteurs doivent correspondre à ceux définis dans le HTML et CSS ci-dessus
-    // 'menu-toggle' est l'ID de la checkbox
-    // '.navbar .menu' est le sélecteur de ton UL
-    const responsiveMenu = new ResponsiveMenuToggle('menu-toggle', '.navbar .menu');
 });
+// ==========================================================
+// CLASSE 4 : Gestion du menu responsive mobile
+// ==========================================================
+
+/**
+ * Gère l'ouverture/fermeture du menu responsive via un bouton "burger".
+ */
+class ResponsiveMenuToggle {
+    /**
+     * @param {string} checkboxId ID de l'input checkbox qui contrôle le menu (ex: #menu-toggle).
+     * @param {string} menuSelector Sélecteur du menu (ex: .menu).
+     */
+    constructor(checkboxId, menuSelector) {
+        this.menuCheckbox = document.getElementById(checkboxId);
+        this.menu = document.querySelector(menuSelector);
+
+        if (!this.menuCheckbox || !this.menu) {
+            console.warn("Menu responsive : éléments non trouvés.");
+            return;
+        }
+
+        this.init();
+    }
+
+    init() {
+        // Fermer le menu quand on clique sur un lien du menu
+        this.menu.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                this.menuCheckbox.checked = false;
+            });
+        });
+    }
+}
